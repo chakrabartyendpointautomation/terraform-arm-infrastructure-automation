@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string", "defaultValue": "[resourceGroup().location]" },
+    "storageAccountName": { "type": "string", "minLength": 3, "maxLength": 24, "metadata": { "description": "Globally unique lowercase letters and numbers only." } },
+    "tags": { "type": "object", "defaultValue": { "environment": "portfolio-lab", "managedBy": "arm", "purpose": "synthetic-iac-example" } }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "sku": { "name": "Standard_LRS" },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "supportsHttpsTrafficOnly": true,
+        "minimumTlsVersion": "TLS1_2",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": false,
+        "publicNetworkAccess": "Disabled",
+        "networkAcls": { "defaultAction": "Deny", "bypass": "None", "ipRules": [], "virtualNetworkRules": [] }
+      }
+    }
+  ],
+  "outputs": {
+    "storageAccountId": { "type": "string", "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]" }
+  }
+}
